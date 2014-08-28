@@ -21,6 +21,7 @@ import android.widget.AbsListView;
 
 /**
  * Created by Stéphane on 09/07/2014.
+ * Modified by Davide Dellai 28/08/2014
  */
 class DirectionScrollListener implements AbsListView.OnScrollListener {
 
@@ -33,30 +34,20 @@ class DirectionScrollListener implements AbsListView.OnScrollListener {
     DirectionScrollListener(FloatingActionButton floatingActionButton) {
         mFloatingActionButton = floatingActionButton;
     }
+    
+   // Fixed scroll
+   @Override
+   public void onScroll(AbsListView view, int firstVisibleItem,
+       int visibleItemCount, int totalItemCount) {
+     if(mPrevPosition != firstVisibleItem){
+       if (firstVisibleItem < mPrevPosition ) 
+           mFloatingActionButton.hide(false);
+        else 
+           mFloatingActionButton.hide(true);
 
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        final View topChild = view.getChildAt(0);
-        int firstViewTop = 0;
-        if (topChild != null) {
-            firstViewTop = topChild.getTop();
-        }
-        boolean goingDown;
-        boolean changed = true;
-        if (mPrevPosition == firstVisibleItem) {
-            final int topDelta = mPrevTop - firstViewTop;
-            goingDown = firstViewTop < mPrevTop;
-            changed = Math.abs(topDelta) > DIRECTION_CHANGE_THRESHOLD;
-        } else {
-            goingDown = firstVisibleItem > mPrevPosition;
-        }
-        if (changed && mUpdated) {
-            mFloatingActionButton.hide(goingDown);
-        }
-        mPrevPosition = firstVisibleItem;
-        mPrevTop = firstViewTop;
-        mUpdated = true;
-    }
+       mPrevPosition = firstVisibleItem;
+     }
+   }
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
